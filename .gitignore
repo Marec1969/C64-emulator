@@ -1,0 +1,14 @@
+/build/
+/.vscode/
+/out/
+CMakeLists.txt
+CMakePresets.json
+games/arkanoid.t64
+games/boulder.t64
+games/cia1_register_info.txt
+games/cia2_register_info.txt
+games/civRegiser.txt
+games/dino.t64
+games/memory.txt
+games/screen.txt
+games/trace.txt
