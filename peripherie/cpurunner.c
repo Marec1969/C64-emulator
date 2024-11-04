@@ -77,15 +77,17 @@ unsigned char* read_binary_file(const char* filename,uint8_t * buffer, size_t fi
     }
 
     fclose(file);
+    printf("Read succsess %s %d\n",filename,filesize);
     return buffer;
 }
 
 
 void loadRom() {
 
-    read_binary_file("basic.rom",(uint8_t *) &rom[BASIC_ROM_ADDR], BASIC_ROM_LEN);
-    read_binary_file("kernel.rom",(uint8_t *)&rom[CORE_ROM_ADDR], CORE_ROM_LEN);
-    read_binary_file("character.rom",(uint8_t *)characters,sizeof(characters));
+    
+    read_binary_file("../rom/basic.rom",(uint8_t *) &rom[BASIC_ROM_ADDR], BASIC_ROM_LEN);    
+    read_binary_file("../rom/kernel.rom",(uint8_t *)&rom[CORE_ROM_ADDR], CORE_ROM_LEN);
+    read_binary_file("../rom/character.rom",(uint8_t *)characters,sizeof(characters));
     
     cpu.PC = (readMemory(0XFFFC,0) | (readMemory(0XFFFD,0) << 8));  // Reset Vector    
 }

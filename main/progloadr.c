@@ -122,6 +122,9 @@ void loadPrg(int rawKey ) {
 
     switch (rawKey)     {
     case 122:
+
+        break;
+    case 123:
             name = getFilename();
             if (name) {
                 scrPtr = load_binary_file(name,&size);
@@ -131,9 +134,6 @@ void loadPrg(int rawKey ) {
                     printf("Error laod Game\n");
                 }
             }
-
-        break;
-    case 123:
         break;
     
     default:

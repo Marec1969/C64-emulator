@@ -125,27 +125,18 @@ static inline void drawMulticolorText(uint8_t fgColor, uint8_t bgColor, uint8_t*
         uint8_t color;
         switch (mask & charBits) {
             case 0xC0:
-            case 0x30:
-            case 0x0C:
-            case 0x03:
                 color = (fgColor & 0x07) | 0x10;
                 break;
             case 0x80:
-            case 0x20:
-            case 0x08:
-            case 0x02:
                 color = vicRegisters.backgroundColor2 | 0x10;
                 break;
             case 0x40:
-            case 0x10:
-            case 0x04:
-            case 0x01:
                 color = vicRegisters.backgroundColor1;
                 break;
             default:
                 color = bgColor;
         }
-        mask >>= 2;
+        charBits <<= 2;
         windowsScreen[bitRow][BR_LEFT + col * 8 + x + (vicRegisters.control2 & 0x07)]  = color; 
         windowsScreen[bitRow][BR_LEFT + col * 8 + x + 1 + (vicRegisters.control2 & 0x07)] = color; 
     }
@@ -180,27 +171,18 @@ static inline void drawMulticolorGrafik(uint8_t fgColorxx, uint8_t fgColor11, ui
         uint8_t color;
         switch (mask & charBits) {
             case 0xC0:
-            case 0x30:
-            case 0x0C:
-            case 0x03:
                 color = (fgColor11 & 0x07) | 0x10;
                 break;
             case 0x80:
-            case 0x20:
-            case 0x08:
-            case 0x02:
                 color = fgColorxx & 0x0f;
                 break;
             case 0x40:
-            case 0x10:
-            case 0x04:
-            case 0x01:
                 color = ((fgColorxx>>4) & 0x0f) | 0x10;
                 break;
             default:
                 color = bgColor;
         }
-        mask >>= 2;
+        charBits <<= 2;
         windowsScreen[bitRow][BR_LEFT + col * 8 + x + (vicRegisters.control2 & 0x07)]  = color; 
         windowsScreen[bitRow][BR_LEFT + col * 8 + x + 1 + (vicRegisters.control2 & 0x07)] = color; 
     }
@@ -278,7 +260,6 @@ void drawCharLine(uint16_t raster) {
         uint8_t* charBitPtr = charBasePtr + character * 8 + charYPos;
 
        if (vicRegisters.control1 & EXTENDEDBACKCOLOR) {
-            character = character & 0x3f;            
             switch(character&0xc0) {
                 case 0xC0:
                         vicRegisters.backgroundColor3;
@@ -293,6 +274,7 @@ void drawCharLine(uint16_t raster) {
                         vicRegisters.backgroundColor;
                     break;
             }
+            character = character & 0x3f;            
        }
        if (vicRegisters.control1 & C64BITMAP) {
             uint16_t startAddr = bankOffset + ((vicRegisters.memoryControl >> 3) & 0x1) * 0x2000;

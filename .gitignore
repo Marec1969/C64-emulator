@@ -1,6 +1,8 @@
 /build/
 /.vscode/
 /out/
+/rom/
+/games/
 CMakeLists.txt
 CMakePresets.json
 games/arkanoid.t64
