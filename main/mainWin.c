@@ -101,20 +101,20 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 
             // Konvertiere den virtuellen Tastencode (wParam) in ASCII
             int asciiLength =
-                ToAscii(wParam, MapVirtualKey(wParam, MAPVK_VK_TO_VSC), keyboardState, (LPWORD)asciiChar, 0);
+                ToAscii((uint32_t)wParam, MapVirtualKey((uint32_t)wParam, MAPVK_VK_TO_VSC), keyboardState, (LPWORD)asciiChar, 0);
 
             if ((asciiLength == 1) && (asciiChar[0] >= 32)) {  // Wenn es genau ein Zeichen ist (kein Sonderzeichen)
                 printf("ASCII-Code: %02X\n", asciiChar[0]);    // ASCII-Code ausgeben
             } else {
                 // asciiChar[0]=0;
-                printf(" Wpara %d\n", wParam);
+                printf(" Wpara %d\n",(uint32_t)wParam);
             }
 
-            keyMapDown(asciiChar[0], wParam);
+            keyMapDown(asciiChar[0],(uint32_t)wParam);
             return 0;
 
         case WM_KEYUP:
-            keyMapUp(wParam);
+            keyMapUp((uint32_t)wParam);
             return 0;
     }
 

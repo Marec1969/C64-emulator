@@ -6,10 +6,10 @@
 #include <stdint.h>
 extern uint8_t readMemory(uint16_t addr, uint16_t trace);
 extern void writeMemory(uint16_t addr, uint8_t value);
+extern uint8_t addrZeropage(void);
+extern uint8_t addrZeropageX(void);
+extern uint8_t addrZeropageY(void);
 extern uint16_t addrImmediate(void);
-extern uint16_t addrZeropage(void);
-extern uint16_t addrZeropageX(void);
-extern uint16_t addrZeropageY(void);
 extern uint16_t addrAbsolute(void);
 extern uint16_t addrAbsoluteX(void);
 extern uint16_t addrAbsoluteY(void);

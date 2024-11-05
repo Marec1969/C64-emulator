@@ -72,7 +72,7 @@ unsigned char* load_binary_file(const char* filename, size_t* filesize) {
 
 int stopIRQ = 0;
 extern int16_t doIRQ;
-static void sloadPrg(uint8_t* ptr, int size) {
+static void sloadPrg(uint8_t* ptr, size_t size) {
     int i;
     uint8_t* dest;
 
@@ -95,8 +95,7 @@ static void sloadPrg(uint8_t* ptr, int size) {
     printf("size of Head %d / cunk %d\n",sizeof(t64Head_t),sizeof(t64Cunk_t));
     printf("Load Prg %s ver %d\tStart %04X\tEnd %04X \t offset %04X\n",t64Cunk->name,t64Cunk->type,t64Cunk->startAddr,t64Cunk->endAddr,t64Cunk->offset);
 #endif
-    printf("Load Prg %s ver %d\tmaxItems %d\trealItems %d\n", t64Head->signature, t64Head->version, t64Head->maxItems,
-           t64Head->realItems);
+    printf("Load Prg %s ver %d\tmaxItems %d\trealItems %d\n", t64Head->signature, t64Head->version, t64Head->maxItems, t64Head->realItems);
 
     ptr += t64Cunk->offset;
     size = t64Cunk->endAddr - t64Cunk->startAddr;
@@ -105,8 +104,7 @@ static void sloadPrg(uint8_t* ptr, int size) {
     for (i = 0; i < size; i++) {
         *dest++ = *ptr++;
     }
-    printf("Load %s\nfrom %04X to %04X   size %04X\toffest %04X\n", t64Cunk->name, t64Cunk->startAddr, t64Cunk->endAddr,
-           size, t64Cunk->offset);
+    printf("Load %s\nfrom %04X to %04X   size %04X\toffest %04X\n", t64Cunk->name, t64Cunk->startAddr, t64Cunk->endAddr,(uint32_t) size, t64Cunk->offset);
 }
 
 void loadPrg(int rawKey) {

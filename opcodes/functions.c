@@ -141,17 +141,17 @@ uint16_t addrImmediate(void) {
     return ++cpu.PC;
 }
 
-uint16_t addrZeropage(void) {
+uint8_t addrZeropage(void) {
     // z.B OPCODE %A5 -> LDA $ll
     return readMemory(++cpu.PC, 0);
 }
 
-uint16_t addrZeropageX(void) {
+uint8_t addrZeropageX(void) {
     // z.B OPCODE %B5 -> LDA $ll,X
     return (readMemory(++cpu.PC, 0) + cpu.X) & 0xFF;
 }
 
-uint16_t addrZeropageY(void) {
+uint8_t addrZeropageY(void) {
     // z.B OPCODE %B6 -> LDX $ll,Y
     return (readMemory(++cpu.PC, 0) + cpu.Y) & 0xFF;
 }

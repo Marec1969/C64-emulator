@@ -65,13 +65,13 @@ unsigned char* read_binary_file(const char* filename, uint8_t* buffer, size_t fi
     // Datei in den Puffer einlesen
     size_t fileRead = fread(buffer, 1, filesize, file);
     if (fileRead != filesize) {
-        printf("Fehler beim Einlesen der Datei %d : %d\n", fileRead, filesize);
+        printf("Fehler beim Einlesen der Datei %zu : %zu\n", fileRead, filesize);
         fclose(file);
         return NULL;
     }
 
     fclose(file);
-    printf("Read succsess %s %d\n", filename, filesize);
+    printf("Read succsess %s %zu\n", filename, filesize);
     return buffer;
 }
 
