@@ -260,4 +260,4 @@ extern void OPCODE_FD(void);  // SBC Absolute,cpu.X
 extern void OPCODE_FE(void);  // INC Absolute,cpu.X
 extern void OPCODE_FF(void);  // SBC (Illegal Opcode)
 
-#endif // OPCODES_H
+#endif  // OPCODES_H

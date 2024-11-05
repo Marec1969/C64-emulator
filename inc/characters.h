@@ -5,4 +5,4 @@
 
 extern unsigned char characters[CHARACTER_LEN];
 
-#endif // CHARACTERS_H
+#endif  // CHARACTERS_H

@@ -10,7 +10,6 @@ typedef struct {
     uint8_t container[24];
 } t64Head_t;
 
-
 typedef struct {
     uint8_t type;
     uint8_t typeAdd;
@@ -23,7 +22,5 @@ typedef struct {
     uint8_t name[16];
 } t64Cunk_t;
 
-
-
-void loadPrg(int rawKey );
+void loadPrg(int rawKey);
 #endif

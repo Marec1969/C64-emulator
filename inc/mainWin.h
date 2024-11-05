@@ -4,8 +4,7 @@
 
 #include <stdint.h>
 
-
-void   windowsUpdateScreen(uint8_t * screenPtr);
+void windowsUpdateScreen(uint8_t* screenPtr);
 int runMainWindow(void);
 
 #endif

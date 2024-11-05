@@ -14,3 +14,4 @@ games/dino.t64
 games/memory.txt
 games/screen.txt
 games/trace.txt
+.clang-format

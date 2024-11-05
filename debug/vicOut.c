@@ -1,18 +1,17 @@
 
-#include <stdio.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <windows.h>
-
 
 #include "vic.h"
 
 extern uint32_t raster;
 
 void writeVic_registers_to_file(void) {
-    VIC_II_Registers *regs = &vicRegisters;
-    FILE *file = fopen("civRegiser.txt", "w");
+    VIC_II_Registers* regs = &vicRegisters;
+    FILE* file = fopen("civRegiser.txt", "w");
     if (file == NULL) {
         printf("Fehler beim Öffnen der Datei!\n");
         return;
@@ -67,16 +66,16 @@ void writeVic_registers_to_file(void) {
 
     fprintf(file, "$D02F\tKeyboard Pins\t\t\t0x%02X\n", regs->keyboardPins);
     fprintf(file, "$D030\tMode\t\t\t\t0x%02X\n", regs->mode);
-#else 
+#else
 
-   fprintf(file, "Address\tName\t\t\tValue\t\tBit Description\n");
+    fprintf(file, "Address\tName\t\t\tValue\t\tBit Description\n");
     fprintf(file, "--------------------------------------------------------------------\n");
 
     // Sprite X/Y Positions (D000 - D00F)
-    for (int i=0;i<8;i++) {
-      fprintf(file, "%04X\tSprite %d X-Position\t%d\n",0xd000 + i*2,i, regs->spritePos[i][0]);
-      fprintf(file, "%04X\tSprite %d Y-Position\t%d\n\n",0xd001 + i*2,i, regs->spritePos[i][1]);
-    } 
+    for (int i = 0; i < 8; i++) {
+        fprintf(file, "%04X\tSprite %d X-Position\t%d\n", 0xd000 + i * 2, i, regs->spritePos[i][0]);
+        fprintf(file, "%04X\tSprite %d Y-Position\t%d\n\n", 0xd001 + i * 2, i, regs->spritePos[i][1]);
+    }
 
     // $D010: X-Position MSB for all Sprites
     fprintf(file, "$D010\tSprite X MSB\t\t0x%02X\t\tBit 0-7: MSB of X position for sprites 0-7\n", regs->spriteX_msb);
@@ -107,7 +106,8 @@ void writeVic_registers_to_file(void) {
     fprintf(file, "\t\t\t\t\tBit 2-0: Pixel offset from left\n");
 
     // $D017: Sprite Double Height
-    fprintf(file, "$D017\tSprite Double Height\t0x%02X\t\tBit 0-7: Double height sprites 0-7\n", regs->spriteDouble_height);
+    fprintf(file, "$D017\tSprite Double Height\t0x%02X\t\tBit 0-7: Double height sprites 0-7\n",
+            regs->spriteDouble_height);
 
     // $D018: Memory Control
     fprintf(file, "$D018\tMemory Control\t\t0x%02X\t\t", regs->memoryControl);
@@ -126,19 +126,24 @@ void writeVic_registers_to_file(void) {
     fprintf(file, "\t\t\t\t\tBit 1: Sprite-background collision IRQ enable\n\t\t\t\t\tBit 0: Raster IRQ enable\n");
 
     // $D01B: Sprite Priority
-    fprintf(file, "$D01B\tSprite Priority\t\t0x%02X\t\tBit 0-7: Sprite priority (1=behind background)\n", regs->spriteBackground_priority);
+    fprintf(file, "$D01B\tSprite Priority\t\t0x%02X\t\tBit 0-7: Sprite priority (1=behind background)\n",
+            regs->spriteBackground_priority);
 
     // $D01C: Sprite Multicolor Mode
-    fprintf(file, "$D01C\tSprite Multicolor Mode\t0x%02X\t\tBit 0-7: Sprite multicolor mode (1=multicolor)\n", regs->spriteMulticolor);
+    fprintf(file, "$D01C\tSprite Multicolor Mode\t0x%02X\t\tBit 0-7: Sprite multicolor mode (1=multicolor)\n",
+            regs->spriteMulticolor);
 
     // $D01D: Sprite Double Width
-    fprintf(file, "$D01D\tSprite Double Width\t0x%02X\t\tBit 0-7: Double width sprites (1=double width)\n", regs->spriteDouble_width);
+    fprintf(file, "$D01D\tSprite Double Width\t0x%02X\t\tBit 0-7: Double width sprites (1=double width)\n",
+            regs->spriteDouble_width);
 
     // $D01E: Sprite-Sprite Collision
-    fprintf(file, "$D01E\tSprite-Sprite Collision\t0x%02X\t\tBit 0-7: Sprite-sprite collision (1=collision)\n", regs->spriteCollision);
+    fprintf(file, "$D01E\tSprite-Sprite Collision\t0x%02X\t\tBit 0-7: Sprite-sprite collision (1=collision)\n",
+            regs->spriteCollision);
 
     // $D01F: Sprite-Background Collision
-    fprintf(file, "$D01F\tSprite-Background Collision\t0x%02X\t\tBit 0-7: Sprite-background collision (1=collision)\n", regs->spriteBackground_collision);
+    fprintf(file, "$D01F\tSprite-Background Collision\t0x%02X\t\tBit 0-7: Sprite-background collision (1=collision)\n",
+            regs->spriteBackground_collision);
 
     // $D020: Border Color
     fprintf(file, "$D020\tBorder Color\t\t0x%02X\n", regs->borderColor);
@@ -175,20 +180,16 @@ void writeVic_registers_to_file(void) {
     fprintf(file, "Raster IRQ (help) = %d\n", regs->rasterCMP);
     fprintf(file, "Raster = %d\n", raster);
 
-
-
 #endif
-
 
     fclose(file);
     printf("Register wurden in die Datei geschrieben.\n");
 }
 
-
 int saveScreen() {
     extern uint8_t memory[];  // Speicher
     // Datei öffnen (oder erstellen) im "w" Modus (write)
-    FILE *filePointer = fopen("screen.txt", "w");
+    FILE* filePointer = fopen("screen.txt", "w");
 
     // Überprüfen, ob die Datei erfolgreich geöffnet wurde
     if (filePointer == NULL) {
@@ -197,38 +198,37 @@ int saveScreen() {
     }
 
     int cnt = 0x0400;
-    for (int i=0;i<25;i++) {
-        for (int j=0;j<40;j++) {
-            if (memory[cnt]>31) {
-                fprintf(filePointer,"%c",memory[cnt]);
+    for (int i = 0; i < 25; i++) {
+        for (int j = 0; j < 40; j++) {
+            if (memory[cnt] > 31) {
+                fprintf(filePointer, "%c", memory[cnt]);
             } else {
-                fprintf(filePointer,"%c",memory[cnt]+'A'-1);
+                fprintf(filePointer, "%c", memory[cnt] + 'A' - 1);
             }
             cnt++;
         }
-         fprintf(filePointer,"\n");
+        fprintf(filePointer, "\n");
     }
 
-    fprintf(filePointer,"\n\n\n\n");
+    fprintf(filePointer, "\n\n\n\n");
 
     cnt = 0x4400;
-    for (int i=0;i<25;i++) {
-        for (int j=0;j<40;j++) {
-            if (memory[cnt]>31) {
-                fprintf(filePointer,"%c",memory[cnt]);
+    for (int i = 0; i < 25; i++) {
+        for (int j = 0; j < 40; j++) {
+            if (memory[cnt] > 31) {
+                fprintf(filePointer, "%c", memory[cnt]);
             } else {
-                fprintf(filePointer,"%c",memory[cnt]+'A'-1);
+                fprintf(filePointer, "%c", memory[cnt] + 'A' - 1);
             }
             cnt++;
         }
-         fprintf(filePointer,"\n");
+        fprintf(filePointer, "\n");
     }
-
 
     // Datei schließen
     fclose(filePointer);
 
     printf("Datei erfolgreich erstellt und geschrieben.\n");
-    
+
     return 0;
 }

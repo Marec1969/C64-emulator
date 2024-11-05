@@ -1,25 +1,20 @@
+
 #include <stdint.h>
 #include <stdio.h>
-
-#include "cia.h"
 #include "ciaRtc.h"
 
+#include "cia.h"
 
-RTC_CIA cia1RTC = {.baseAddress = CIA1_BASE}; // CIA 1
-RTC_CIA cia2RTC = {.baseAddress = CIA2_BASE}; // CIA 2
-
+RTC_CIA cia1RTC = {.baseAddress = CIA1_BASE};  // CIA 1
+RTC_CIA cia2RTC = {.baseAddress = CIA2_BASE};  // CIA 2
 
 // Hilfsfunktionen zur Umrechnung zwischen BCD und Binär
-static uint8_t bcd_to_bin(uint8_t bcd) {
-    return (bcd & 0x0F) + ((bcd >> 4) * 10);
-}
+static uint8_t bcd_to_bin(uint8_t bcd) { return (bcd & 0x0F) + ((bcd >> 4) * 10); }
 
-static uint8_t bin_to_bcd(uint8_t bin) {
-    return ((bin / 10) << 4) | (bin % 10);
-}
+static uint8_t bin_to_bcd(uint8_t bin) { return ((bin / 10) << 4) | (bin % 10); }
 
 // Funktion zum Inkrementieren der RTC-Zeiten
-void increment_rtc(RTC_CIA *cia) {
+void increment_rtc(RTC_CIA* cia) {
     // Inkrementiere todTenth
     uint8_t tenths = cia->TOD_10TH;
     tenths++;
@@ -52,16 +47,14 @@ void increment_rtc(RTC_CIA *cia) {
                 cia->TOD_MIN = bin_to_bcd(minutes);
             }
         } else {
-            cia->TOD_SEC= bin_to_bcd(seconds);
+            cia->TOD_SEC = bin_to_bcd(seconds);
         }
     } else {
         cia->TOD_10TH = tenths;
     }
     // Alarmprüfung nach jedem Zeitschritt
-    if (cia->CRB7 == 1 && // Nur prüfen, wenn im RTC-Modus
-        cia->TOD_HR == cia->ALARM_HR &&
-        cia->TOD_MIN == cia->ALARM_MIN &&
-        cia->TOD_SEC == cia->ALARM_SEC &&
+    if (cia->CRB7 == 1 &&  // Nur prüfen, wenn im RTC-Modus
+        cia->TOD_HR == cia->ALARM_HR && cia->TOD_MIN == cia->ALARM_MIN && cia->TOD_SEC == cia->ALARM_SEC &&
         cia->TOD_10TH == cia->ALARM_10TH) {
         cia->alarmTriggered = 1;
         printf("Alarm ausgelöst!\n");
@@ -69,9 +62,9 @@ void increment_rtc(RTC_CIA *cia) {
 }
 
 // Funktion zum Schreiben in ein Register (RTC oder Alarm, abhängig von CRB7)
-void write_regRTC(RTC_CIA *cia, uint16_t regAddr, uint8_t value) {
+void write_regRTC(RTC_CIA* cia, uint16_t regAddr, uint8_t value) {
     // printf("Write to RTC %04x  val = %02x\n",regAddr,value);
-    switch (regAddr&0xff) {
+    switch (regAddr & 0xff) {
         case 0x0B:  // TOD_HR
             if (cia->CRB7) {
                 cia->ALARM_HR = value;
@@ -105,31 +98,43 @@ void write_regRTC(RTC_CIA *cia, uint16_t regAddr, uint8_t value) {
 }
 
 // Funktion zum Lesen eines Registers (RTC oder Alarm, abhängig von CRB7)
-uint8_t read_regRTC(RTC_CIA *cia, uint16_t regAddr) {
-uint8_t value=0;
-    if (cia->latchActive) { // Bei aktivem Latch-Status aus LATCH_* lesen
+uint8_t read_regRTC(RTC_CIA* cia, uint16_t regAddr) {
+    uint8_t value = 0;
+    if (cia->latchActive) {  // Bei aktivem Latch-Status aus LATCH_* lesen
         switch (regAddr & 0xff) {
-            case 0x0B: value = cia->LATCH_HR; break;
-            case 0x0A: value = cia->LATCH_MIN; break;
-            case 0x09: value = cia->LATCH_SEC; break;
-            case 0x08: value = cia->LATCH_10TH;break;
+            case 0x0B:
+                value = cia->LATCH_HR;
+                break;
+            case 0x0A:
+                value = cia->LATCH_MIN;
+                break;
+            case 0x09:
+                value = cia->LATCH_SEC;
+                break;
+            case 0x08:
+                value = cia->LATCH_10TH;
+                break;
         }
-    } else { // Ohne Latch, direktes Lesen aus TOD_*
+    } else {  // Ohne Latch, direktes Lesen aus TOD_*
         switch (regAddr & 0xff) {
-            case 0x0B: 
+            case 0x0B:
                 cia->latchActive = 1;
                 cia->LATCH_HR = cia->TOD_HR;
                 cia->LATCH_MIN = cia->TOD_MIN;
                 cia->LATCH_SEC = cia->TOD_SEC;
                 cia->LATCH_10TH = cia->TOD_10TH;
-                value = cia->TOD_HR; break;
-            case 0x0A: 
-                value = cia->TOD_MIN; break;
-            case 0x09: 
-                value = cia->TOD_SEC; break;
-            case 0x08: 
-                cia->latchActive = 0; // Latch deaktivieren durch Schreiben auf TOD_10TH
-                value =  cia->TOD_10TH; break;
+                value = cia->TOD_HR;
+                break;
+            case 0x0A:
+                value = cia->TOD_MIN;
+                break;
+            case 0x09:
+                value = cia->TOD_SEC;
+                break;
+            case 0x08:
+                cia->latchActive = 0;  // Latch deaktivieren durch Schreiben auf TOD_10TH
+                value = cia->TOD_10TH;
+                break;
         }
     }
     // printf("read from RTC %04x  val = %02x\n",regAddr,value);

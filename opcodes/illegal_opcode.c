@@ -1,12 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void illegalOpcode(const char *opcode, const char *description) {
+void illegalOpcode(const char* opcode, const char* description) {
     printf("Illegal opcode %s (%s)\r\n", opcode, description);
-    
 }
-
-
 
 void OPCODE_02(void) { illegalOpcode("0x02", "???"); }
 void OPCODE_03(void) { illegalOpcode("0x03", "???"); }
@@ -112,5 +109,3 @@ void OPCODE_FA(void) { illegalOpcode("0xFA", "ISC Zero Page, X"); }
 void OPCODE_FB(void) { illegalOpcode("0xFb", "ISC Zero Page, X"); }
 void OPCODE_FC(void) { illegalOpcode("0xFC", "ISC Zero Page, X"); }
 void OPCODE_FF(void) { illegalOpcode("0xFF", "ISC Zero Page, X"); }
-
-
