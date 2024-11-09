@@ -49,7 +49,7 @@ int main() {
 
     MMRESULT timerID = timeSetEvent(
         5,                // Intervall von 10 ms
-        5,                 // Auflösung von 1 ms
+        1,                // Auflösung von 1 ms
         TimerCallback,     // Callback-Funktion
         0,                 // Benutzerdefinierte Daten
         TIME_PERIODIC      // Periodischer Timer

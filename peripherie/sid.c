@@ -11,7 +11,7 @@
 
 #define SAMPLE_RATE 22000             // Abtastrate
 #define AMPLITUDE 700 // (32000/3 / 15)           // Amplitude des Signals
-#define BUFFER_CHUNK_SIZE 440         // Größe eines Puffersegments
+#define BUFFER_CHUNK_SIZE  400         // Größe eines Puffersegments
 #define BUFFER_CHUNK_COUNT 4          // Anzahl der Puffersegmente (für Ringpuffer)
 #define MAX_VOICE 3
 
@@ -82,7 +82,7 @@ uint8_t sidRead(uint16_t addr) {
 }
 
 void sidWrite(uint16_t addr, uint8_t value) {
-    // return;
+     // return;
   // Switch-Anweisung für addr
     switch (addr) {
         case 0xD400:  // Frequenz Stimme 1 (Low-Byte)
@@ -410,7 +410,7 @@ void fill_buffer_with_tone(int chunkIndex) {
                     helpBuffer[voiceCNT][i] = (int16_t)(volume * envelop * pwm(timeInPeriode[voiceCNT],voice[voiceCNT].freq,voice[voiceCNT].dutyCycle));
                 break;
             case NOISE:             
-                    helpBuffer[voiceCNT][i] = 0; // (int16_t)(volume * envelop * noise(timeInPeriode[voiceCNT],voice[voiceCNT].freq));
+                    helpBuffer[voiceCNT][i] = (int16_t)(volume * envelop * noise(timeInPeriode[voiceCNT],voice[voiceCNT].freq));
                 break;
             
             default:
@@ -465,15 +465,15 @@ int intSid() {
 
     for (int i=0;i<MAX_VOICE;i++) {
         voice[i].freq = 440;
-        voice[i].attack = 2.0;
-        voice[i].decay = 6.0;
-        voice[i].release = 10.0;
+        voice[i].attack = 0.05;
+        voice[i].decay = 0.05;
+        voice[i].release = 0.1;
         voice[i].dutyCycle = 0.5;
         voice[i].sustainVol = 10;
-        voice[i].keyBit = 1;
-        voice[i].state = ATTACK; // MUTE;
+        voice[i].keyBit = 0;
+        voice[i].state = MUTE;// ATTACK; // MUTE;
         voice[i].time = 0;
-        voice[i].type = TRI; // NONE;
+        voice[i].type =  NONE; // TRI; 
     }
     
     sidRegister.volume_and_filter = 0x0f; // set volume to max
@@ -543,9 +543,7 @@ void close_audio() {
 void doSid() {
 
     play_continuous_tone();
-
-//    close_audio();
-    
+//    close_audio();    
 }
 
 

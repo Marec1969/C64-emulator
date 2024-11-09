@@ -435,9 +435,16 @@ void updateSpriteLine(int16_t rasterPosY) {
         }
     }
 }
+static LARGE_INTEGER frequency;
+static LARGE_INTEGER start, end;
 
-void doSid();
+void waitWithMultimediaTimer(double milliseconds) {
+    timeBeginPeriod(1);  // Stellt die Timer-Auflösung auf 1 ms ein
+    Sleep((DWORD)milliseconds);
+    timeEndPeriod(1);    // Setzt die Timer-Auflösung wieder zurück
+}
 
+ 
 void updateVic(uint32_t clkCountS) {
     static uint32_t oldRaster;
 
@@ -478,13 +485,20 @@ void updateVic(uint32_t clkCountS) {
         if (raster == (PAL_B_MAX_RASTER - 1)) {
             vicUpdateCnt++;
             windowsUpdateScreen(&windowsScreen[0][0]);
-          //  doSid();
-            if ((vicUpdateCnt % 2) == 0) {
-                Sleep(20);
-            } else {
-                Sleep(10);
-            }
+            QueryPerformanceFrequency(&frequency);  // Frequenz des Hochleistungszählers
+            QueryPerformanceCounter(&end);  // Endzeitpunkt
+            double elapsed = (double)(end.QuadPart - start.QuadPart) / frequency.QuadPart;
+            QueryPerformanceCounter(&start);        // Startzeitpunkt
+            if (vicUpdateCnt>1) {
+                // printf("%3.3f\n", elapsed);
+                waitWithMultimediaTimer(20 - elapsed);
+            }    
         }
         oldRaster = raster;
     }
 }
+
+#if 0
+
+
+#endif

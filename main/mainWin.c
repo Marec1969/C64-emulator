@@ -104,10 +104,10 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
                 ToAscii((uint32_t)wParam, MapVirtualKey((uint32_t)wParam, MAPVK_VK_TO_VSC), keyboardState, (LPWORD)asciiChar, 0);
 
             if ((asciiLength == 1) && (asciiChar[0] >= 32)) {  // Wenn es genau ein Zeichen ist (kein Sonderzeichen)
-                printf("ASCII-Code: %02X\n", asciiChar[0]);    // ASCII-Code ausgeben
+                // printf("ASCII-Code: %02X\n", asciiChar[0]);    // ASCII-Code ausgeben
             } else {
                 // asciiChar[0]=0;
-                printf(" Wpara %d\n",(uint32_t)wParam);
+                // printf(" Wpara %d\n",(uint32_t)wParam);
             }
 
             keyMapDown(asciiChar[0],(uint32_t)wParam);
