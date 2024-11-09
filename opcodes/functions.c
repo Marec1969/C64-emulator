@@ -8,6 +8,7 @@
 #include "cpurunner.h"
 #include "trace.h"
 #include "vic.h"
+#include "sid.h"
 
 extern const unsigned char prom[];
 extern const unsigned char characters[];
@@ -46,6 +47,9 @@ uint8_t readMemory(uint16_t addr, uint16_t trace) {
                 } else if ((addr >= COLOR_ADDR) && (addr <= COLOR_ADDR_END)) {
                     val = colormap[addr - COLOR_ADDR];
                     seg = MEM_COLOR;
+                } else if (addr >= 0xD400 && addr <= 0xD7FF) {                    
+                    val = sidRead(addr);
+                    seg = MEM_SID;
                 } else {
                     val = rom[addr];
                     seg = MEM_ROM;
@@ -114,7 +118,8 @@ void writeMemory(uint16_t addr, uint8_t value) {
                     colormap[addr - COLOR_ADDR] = value;
                 } else if (addr >= 0xD400 && addr <= 0xD7FF) {
                     // Sound Interface Chip (SID) - ignorieren, nicht implementiert
-                    seg = MEM_IGNORE;
+                    sidWrite(addr,value);
+                    seg = MEM_SID;
                 } else {
                     // Fehlerprotokollierung für nicht verwendete Adressen
                     printf("write to nothing! cpuport[1,2]=%02x:%02x addr=%04x val=%02x\n", memory[0], memory[1], addr,
@@ -131,9 +136,6 @@ void writeMemory(uint16_t addr, uint8_t value) {
 
     // Einmaliger Aufruf am Ende zur Protokollierung
     updateTraceWRMem(addr, value, seg);
-    if ((addr < 2) && (memory[1] != 7)) {
-        // printf("CPU Port  %02x  %02x\n",memory[0],memory[1]);
-    }
 }
 
 uint16_t addrImmediate(void) {

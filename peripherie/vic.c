@@ -436,6 +436,8 @@ void updateSpriteLine(int16_t rasterPosY) {
     }
 }
 
+void doSid();
+
 void updateVic(uint32_t clkCountS) {
     static uint32_t oldRaster;
 
@@ -476,6 +478,7 @@ void updateVic(uint32_t clkCountS) {
         if (raster == (PAL_B_MAX_RASTER - 1)) {
             vicUpdateCnt++;
             windowsUpdateScreen(&windowsScreen[0][0]);
+          //  doSid();
             if ((vicUpdateCnt % 2) == 0) {
                 Sleep(20);
             } else {

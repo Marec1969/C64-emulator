@@ -1,9 +1,14 @@
 
+#include <windows.h>
+#include <mmsystem.h>
+#pragma comment(lib, "winmm.lib")
+
 #include <pthread.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 
 #include "cpurunner.h"
 #include "mainWin.h"
@@ -18,6 +23,14 @@ volatile int running = 1;
 
 extern void terminateWindow(void);
 
+void  intSid(void);
+void  doSid(void);
+
+void CALLBACK TimerCallback(UINT uID, UINT uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWORD_PTR dw2) {
+     doSid();
+}
+
+
 void mainStop(int from) {
     running = 0;
     if (from == 0) {
@@ -30,7 +43,26 @@ int mainRunning(void) { return running; }
 // Main function
 int main() {
     pthread_t mainThread, msgThread;
-    printf("MAin start\n");
+    printf("Main start\n");
+
+    intSid();
+
+    MMRESULT timerID = timeSetEvent(
+        5,                // Intervall von 10 ms
+        5,                 // Auflösung von 1 ms
+        TimerCallback,     // Callback-Funktion
+        0,                 // Benutzerdefinierte Daten
+        TIME_PERIODIC      // Periodischer Timer
+    );
+
+    if (timerID == 0) {
+        printf("Multimedia-Timer konnte nicht erstellt werden.\n");
+        return 1;
+    }
+
+//    Sleep(5010); // 5 Sekunden warten, damit der Timer aktiv ist
+
+#if 1
     cpuRunnerInit();
 
     // Creating the thread for the main loop
@@ -49,6 +81,8 @@ int main() {
     pthread_join(mainThread, NULL);  // Waiting for the main loop thread
     pthread_join(msgThread, NULL);   // Waiting for the message processing thread
 
+#endif
+    timeKillEvent(timerID); // Timer beenden
     return 0;
 }
 

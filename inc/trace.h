@@ -20,7 +20,8 @@
 #define MEM_IO 3
 #define MEM_CHAR 4
 #define MEM_COLOR 5
-#define MEM_IGNORE 6
+#define MEM_SID   6
+#define MEM_IGNORE 7
 
 #define MAXTRACE 1000000
 
