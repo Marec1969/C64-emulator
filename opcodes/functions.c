@@ -10,6 +10,11 @@
 #include "vic.h"
 #include "sid.h"
 
+#define IOSTART 0xD000
+#define IOEND   0xE000
+
+
+
 extern const unsigned char prom[];
 extern const unsigned char characters[];
 
@@ -33,10 +38,10 @@ uint8_t readMemory(uint16_t addr, uint16_t trace) {
         seg = MEM_RAM;
         val = memory[addr];
     } else {
-        if ((addr >= 0xD000) && (addr < 0xE000)) {
+        if ((addr >= IOSTART) && (addr < IOEND)) {
             if ((memory[1] & 0x04) == 0x04) {
-                if ((addr >= 0xD000) && (addr <= 0xD030)) {
-                    val = readVic(addr);
+                if ((addr >= VICADDR) && (addr <= VICEND)) {
+                    val = readVic(addr & VICMASK);
                     seg = MEM_IO;
                 } else if ((addr >= CIA1ADDR) && (addr <= CIA1END)) {
                     val = readCia1(addr);
@@ -47,8 +52,8 @@ uint8_t readMemory(uint16_t addr, uint16_t trace) {
                 } else if ((addr >= COLOR_ADDR) && (addr <= COLOR_ADDR_END)) {
                     val = colormap[addr - COLOR_ADDR];
                     seg = MEM_COLOR;
-                } else if (addr >= 0xD400 && addr <= 0xD7FF) {                    
-                    val = sidRead(addr);
+                } else if (addr >= CIDADDR && addr <= CIDEND) {                    
+                    val = sidRead(addr & CIDMASK);
                     seg = MEM_SID;
                 } else {
                     val = rom[addr];
@@ -58,7 +63,7 @@ uint8_t readMemory(uint16_t addr, uint16_t trace) {
                 val = characters[addr - CHAR_ROM_ADDR];
                 seg = MEM_CHAR;
             }
-        } else if ((addr >= 0xA000) && (addr < 0xC000)) {
+        } else if ((addr >= BASIC_ROM_ADDR) && (addr <= BASIC_ROM_END)) {
             if ((memory[1] & 0x03) == 0x03) {
                 val = rom[addr];
                 seg = MEM_ROM;
@@ -66,7 +71,7 @@ uint8_t readMemory(uint16_t addr, uint16_t trace) {
                 val = memory[addr];
                 seg = MEM_RAM;
             }
-        } else if (addr >= 0xE000) {
+        } else if (addr >= CORE_ROM_ADDR) {
             if ((memory[1] & 0x02) == 0x02) {
                 val = rom[addr];
                 seg = MEM_ROM;
@@ -100,13 +105,13 @@ void writeMemory(uint16_t addr, uint8_t value) {
     } else {
         // Überprüfen, ob die Adresse im Bereich D000 - E000 liegt
         // only IO can be written ; if not IO it wil lbe writte to RAM
-        if (addr >= 0xD000 && addr < 0xE000) {
+        if (addr >= IOSTART && addr < IOEND) {
             // Überprüfen, ob die RAM-Nutzung aktiviert ist
             if (memory[1] & 0x04) {  // Wenn Bit 2 gesetzt ist
                 // I/O-Bereich überprüfen
-                if (addr <= 0xD030) {
+                if (addr <= VICEND) {
                     seg = MEM_IO;
-                    writeVic(addr, value);
+                    writeVic(addr & VICMASK, value);
                 } else if (addr >= CIA1ADDR && addr <= CIA1END) {
                     seg = MEM_IO;
                     writeCia1(addr, value);
@@ -116,9 +121,9 @@ void writeMemory(uint16_t addr, uint8_t value) {
                 } else if (addr >= COLOR_ADDR && addr <= COLOR_ADDR_END) {
                     seg = MEM_COLOR;
                     colormap[addr - COLOR_ADDR] = value;
-                } else if (addr >= 0xD400 && addr <= 0xD7FF) {
+                } else if (addr >= CIDADDR && addr <= CIDEND) {
                     // Sound Interface Chip (SID) - ignorieren, nicht implementiert
-                    sidWrite(addr,value);
+                    sidWrite(addr & CIDMASK,value);
                     seg = MEM_SID;
                 } else {
                     // Fehlerprotokollierung für nicht verwendete Adressen

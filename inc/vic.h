@@ -4,6 +4,11 @@
 
 #include <stdint.h>
 
+#define VICADDR 0xD000
+#define VICEND  0xD3FF
+#define VICMASK 0xD03F
+
+
 #define BLACK 0
 #define WHITE 1
 #define RED 2
@@ -221,6 +226,8 @@ typedef struct {
     uint8_t mode;
 
     uint16_t rasterCMP;
+
+    uint8_t padding[15];
 
 } VIC_II_Registers;
 

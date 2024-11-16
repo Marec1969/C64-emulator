@@ -24,12 +24,13 @@ volatile int running = 1;
 extern void terminateWindow(void);
 
 void  intSid(void);
+#if 1
 void  doSid(void);
 
 void CALLBACK TimerCallback(UINT uID, UINT uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWORD_PTR dw2) {
      doSid();
 }
-
+#endif
 
 void mainStop(int from) {
     running = 0;
@@ -48,8 +49,8 @@ int main() {
     intSid();
 
     MMRESULT timerID = timeSetEvent(
-        5,                // Intervall von 10 ms
-        1,                // Auflösung von 1 ms
+        10,                // Intervall von 10 ms
+        5,                // Auflösung von 1 ms
         TimerCallback,     // Callback-Funktion
         0,                 // Benutzerdefinierte Daten
         TIME_PERIODIC      // Periodischer Timer

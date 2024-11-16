@@ -102,6 +102,7 @@ void setException(int16_t from) {
 }
 
 void exitCPURunner(void) {
+    extern void saveSong(void);
 #ifdef MEASURE_PERFORMANZE
     // uint64_t endTsc = rdtsc();
     QueryPerformanceCounter(&end);  // Endzeitpunkt
@@ -124,18 +125,22 @@ void exitCPURunner(void) {
     // Arbeitsverzeichnis zurücksetzen
     SetWorkingDirectory(startDir);
 
+    saveSong();
+    /*
     saveMemory();
     saveScreen();
     writeVic_registers_to_file();
     writeCia1toTxtFile();
     writeCia2toTxtFile();
-    // writeTrace();
+    */
+   // writeTrace();
 }
 
 void cpuRunnerDo(void) {
     uint8_t OPCODE;
     static int oldptr = -1;
     static int16_t oldNIM = 1;
+    static int16_t oldIRQ = 0;
     uint32_t oldClkCount = 0;
     uint32_t clkDiff = 0;
     int run = 0;

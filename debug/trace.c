@@ -229,7 +229,7 @@ void updateTraceStartIRQ(void) {
     trace[traceRunner].action = ACTION_START_IRQ;
     trace[traceRunner].inIrq = traceInIRQ;
     trace[traceRunner].irq = doIRQ;
-    if (traceInIRQ >= 3) {
+    if (traceInIRQ >= 5) {
         setException(EXCEPTION_TRACE);
     }
 

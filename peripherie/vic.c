@@ -43,6 +43,24 @@ static uint64_t startTsc = 0;
 int16_t rasterXpos;
 uint32_t raster;
 
+
+#include <intrin.h>  // Für _mm_pause()
+
+void busyWaitMicroseconds(double microseconds) {
+    LARGE_INTEGER frequency, start, current;
+    QueryPerformanceFrequency(&frequency);
+    QueryPerformanceCounter(&start);
+
+    double targetSeconds = microseconds / 1e6;
+    double elapsed = 0.0;
+
+    while (elapsed < targetSeconds) {
+        _mm_pause();  // CPU-optimierte Pause
+        QueryPerformanceCounter(&current);
+        elapsed = (double)(current.QuadPart - start.QuadPart) / frequency.QuadPart;
+    }
+}
+
 void printBits(unsigned char num) {
     // Schleife über die Bits von Bit 7 bis Bit 0 (insgesamt 8 Bits)
     for (int i = 7; i >= 0; i--) {
@@ -447,6 +465,7 @@ void waitWithMultimediaTimer(double milliseconds) {
  
 void updateVic(uint32_t clkCountS) {
     static uint32_t oldRaster;
+    static int add=0;
 
     raster = (clkCountS / (63)) % PAL_B_MAX_RASTER;
     rasterXpos = clkCountS % (63);
@@ -468,6 +487,8 @@ void updateVic(uint32_t clkCountS) {
     }
 
     if ((oldRaster != raster) && (rasterXpos > 40)) {
+
+        busyWaitMicroseconds(50+add);
         startTsc = rdtsc();
 
         if ((raster >= 51) && (raster <= 250)) {
@@ -490,8 +511,14 @@ void updateVic(uint32_t clkCountS) {
             double elapsed = (double)(end.QuadPart - start.QuadPart) / frequency.QuadPart;
             QueryPerformanceCounter(&start);        // Startzeitpunkt
             if (vicUpdateCnt>1) {
+                elapsed *= 1000;
                 // printf("%3.3f\n", elapsed);
-                waitWithMultimediaTimer(20 - elapsed);
+                if (elapsed<20) {
+                    add++;
+                   // waitWithMultimediaTimer(20 - elapsed);
+                } else {
+                    add--;
+                }
             }    
         }
         oldRaster = raster;

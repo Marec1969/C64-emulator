@@ -3,6 +3,11 @@
 
 #include <stdint.h>
 
+#define CIDADDR 0xD400
+#define CIDEND  0xD7FF
+#define CIDMASK 0xD41F
+
+
 typedef struct {
     uint8_t freq_voice1_low;         // $D400 / 54272: Frequenz Stimme 1 (Low-Byte)
     uint8_t freq_voice1_high;        // $D401 / 54273: Frequenz Stimme 1 (High-Byte)
@@ -51,12 +56,58 @@ typedef struct {
     uint8_t unused3;   // $D41F / 54303: unbenutzt
 } sid_t;
 
+
+
+enum soundType {    
+PWM,
+SAW,
+TRI,
+NOISE,
+NONE
+} ;
+
+
+enum soundState {    
+MUTE,
+ATTACK,
+DECAY,
+RELEASE,
+SUSTAIN
+} ;
+
+typedef struct {
+double time;
+double endTime;
+float freq; // Freq in parets of HArmonc (0.01Hz)
+float dutyCycle;
+uint16_t ring;
+uint16_t sync;
+float attack; // in s
+float decay;  // in s
+uint16_t sustainVol; 
+float release; // in s
+uint16_t keyBit;
+enum soundType type;
+enum soundState state; 
+} voice_t;
+
 #define SID_START_ADDR 0xD400
 #define SID_END_ADDR 0xD7ff
 
+#define SAMPLE_RATE 22000                  // Abtastrate
+#define HARMONIC_RATE 2200000             // Grundschwingung für syntese
+#define AMPLITUDE 700 // (32000/3 / 15)    // Amplitude des Signals
+#define BUFFER_CHUNK_SIZE  880         // Größe eines Puffersegments (40ms)
+#define BUFFER_CHUNK_COUNT 2          // Anzahl der Puffersegmente (für Ringpuffer)
+#define MAX_VOICE 3
+
+
 extern sid_t sidRegister;
+extern voice_t voice[MAX_VOICE];
 
 void sidWrite(uint16_t addr, uint8_t value);
 uint8_t sidRead(uint16_t addr);
+
+void putNoteToSong(int voiceNr);
 
 #endif
