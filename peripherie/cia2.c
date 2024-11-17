@@ -20,7 +20,7 @@ void writeCia2(uint16_t adresse, uint8_t value) {
         case 0xDD00:  // Adresse: 0xDD00 (CIA 2)
                       // Port A Data Register
                       // Bit 7-0: I/O Pins von Port A
-            // printf("write to cia2 PAR %02x  from %04X\n",value,cpu.PC);
+            //printf("write to cia2 PAR %02x \n",value);
             cia2.pra = value;
             break;
 
@@ -33,8 +33,8 @@ void writeCia2(uint16_t adresse, uint8_t value) {
         case 0xDD02:  // Adresse: 0xDD02 (CIA 2)
                       // Data Direction Register A
                       // Bit 7-0: 0 = Input, 1 = Output für Port A
-            cia2.pra |=
-                ~value;  // die Eingänge nehmen durch den Pull-UP eien "1" an wenn sie auch Eingang porgrammiert werden
+            // printf("write cia2  direction %02x\n",value);
+            cia2.pra |=  ~value;  // die Eingänge nehmen durch den Pull-UP eien "1" an wenn sie auch Eingang porgrammiert werden
             cia2.ddra = value;
             break;
 
@@ -176,7 +176,7 @@ uint8_t readCia2(uint16_t adresse) {
         case 0xDD00:  // Adresse: 0xDD00 (CIA 2)
                       // Port A Data Register
                       // Bit 7-0: I/O Pins von Port A
-            // printf("read from cia2 PAR %02x  from %04X\n",cia2.pra,cpu.PC);
+            // printf("read from cia2 PAR %02x\n",cia2.pra);
             value = cia2.pra;
             break;
 

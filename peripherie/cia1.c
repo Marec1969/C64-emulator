@@ -98,6 +98,7 @@ void writeCia1(uint16_t adresse, uint8_t value) {
                       // Bit 3: 1 = Interruptfreigabe für das Ende der Übertragung eines kompletten Bytes über das
                       // serielle Schieberegister. Bit 4: 1 = Interruptfreigabe für das Erkennen einer negativen Flanke
                       // am FLAG-Pin.
+            // printf("Write CAI 1 ICR %02x\n",value);
             if (value & 0x80) {
                 cia1.icrMask |= value;
             } else {
@@ -273,6 +274,7 @@ uint8_t readCia1(uint16_t adresse) {
                       // serielle Schieberegister. Bit 4: 1 = Interruptfreigabe für das Erkennen einer negativen Flanke
                       // am FLAG-Pin.
             value = cia1.icr;
+            // printf("read CAI 1 ICR %02x\n",value);
             cia1.icr = 0;
             doIRQ &= ~(CIA1_A_IRQ | CIA1_B_IRQ);
             break;

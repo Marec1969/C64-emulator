@@ -43,9 +43,12 @@ uint8_t sidRead(uint16_t addr) {
 
 #define SCALE_FREQ 44000.0 / 7493.0
 
-float scaleFreq(int16_t val) {
+float scaleFreq(uint16_t val,int out) {
+    extern uint32_t clkCount;
     int32_t freq = (float)val * SCALE_FREQ;
-
+    if (out) {
+        printf("Set freq %.1f\t%.3f\n",(float)freq*0.01,(float)clkCount*1e-6);
+    }
     return (float) freq;
 }
 
@@ -55,19 +58,19 @@ void sidWrite(uint16_t addr, uint8_t value) {
     switch (addr) {
         case 0xD400:  // Frequenz Stimme 1 (Low-Byte)
             sidRegister.freq_voice1_low = value;
-            voice[0].freq = scaleFreq((sidRegister.freq_voice1_high << 8) | sidRegister.freq_voice1_low);
+            voice[0].freq = scaleFreq((sidRegister.freq_voice1_high << 8) | sidRegister.freq_voice1_low,0);
             break;
         case 0xD401:  // Frequenz Stimme 1 (High-Byte)
             sidRegister.freq_voice1_high = value;
-            voice[0].freq = scaleFreq((sidRegister.freq_voice1_high << 8) | sidRegister.freq_voice1_low);
+            voice[0].freq = scaleFreq((sidRegister.freq_voice1_high << 8) | sidRegister.freq_voice1_low,0);
             break;
         case 0xD402:  // Tastverhältnis Stimme 1 (Low-Byte)
             sidRegister.duty_cycle_voice1_low = value;
-            voice[0].dutyCycle =  (float)(((sidRegister.duty_cycle_voice1_high << 8) & 0x0f)  | sidRegister.duty_cycle_voice1_low) / 4096.0;
+            voice[0].dutyCycle =  (float)(((sidRegister.duty_cycle_voice1_high << 8) & 0x0f00)  | sidRegister.duty_cycle_voice1_low) / 4096.0;
             break;
         case 0xD403:  // Tastverhältnis Stimme 1 (High-Byte)
             sidRegister.duty_cycle_voice1_high = value;
-            voice[0].dutyCycle =  (float)(((sidRegister.duty_cycle_voice1_high << 8) & 0x0f)  | sidRegister.duty_cycle_voice1_low) / 4096.0;
+            voice[0].dutyCycle =  (float)(((sidRegister.duty_cycle_voice1_high << 8) & 0x0f00)  | sidRegister.duty_cycle_voice1_low) / 4096.0;
             break;
         case 0xD404:  // Wellenform Stimme 1
             sidRegister.waveform_voice1 = value;
@@ -113,19 +116,19 @@ void sidWrite(uint16_t addr, uint8_t value) {
 
         case 0xD407:  // Frequenz Stimme 2 (Low-Byte)
             sidRegister.freq_voice2_low = value;
-            voice[1].freq = scaleFreq((sidRegister.freq_voice2_high << 8) | sidRegister.freq_voice2_low);
+            voice[1].freq = scaleFreq((sidRegister.freq_voice2_high << 8) | sidRegister.freq_voice2_low,0);
             break;
         case 0xD408:  // Frequenz Stimme 2 (High-Byte)
             sidRegister.freq_voice2_high = value;
-            voice[1].freq = scaleFreq((sidRegister.freq_voice2_high << 8) | sidRegister.freq_voice2_low);
+            voice[1].freq = scaleFreq((sidRegister.freq_voice2_high << 8) | sidRegister.freq_voice2_low,0);
             break;
         case 0xD409:  // Tastverhältnis Stimme 2 (Low-Byte)
             sidRegister.duty_cycle_voice2_low = value;
-            voice[1].dutyCycle =  (float)(((sidRegister.duty_cycle_voice2_high << 8) & 0x0f)  | sidRegister.duty_cycle_voice2_low) / 4096.0;
+            voice[1].dutyCycle =  (float)(((sidRegister.duty_cycle_voice2_high << 8) & 0x0f00)  | sidRegister.duty_cycle_voice2_low) / 4096.0;
             break;
         case 0xD40A:  // Tastverhältnis Stimme 2 (High-Byte)
             sidRegister.duty_cycle_voice2_high = value;
-            voice[1].dutyCycle =  (float)(((sidRegister.duty_cycle_voice2_high << 8) & 0x0f)  | sidRegister.duty_cycle_voice2_low) / 4096.0;
+            voice[1].dutyCycle =  (float)(((sidRegister.duty_cycle_voice2_high << 8) & 0x0f00)  | sidRegister.duty_cycle_voice2_low) / 4096.0;
             break;
         case 0xD40B:  // Wellenform Stimme 2
             sidRegister.waveform_voice2 = value;
@@ -170,19 +173,19 @@ void sidWrite(uint16_t addr, uint8_t value) {
 
         case 0xD40E:  // Frequenz Stimme 3 (Low-Byte)
             sidRegister.freq_voice3_low = value;
-            voice[2].freq = scaleFreq((sidRegister.freq_voice3_high << 8) | sidRegister.freq_voice3_low);
+            voice[2].freq = scaleFreq((sidRegister.freq_voice3_high << 8) | sidRegister.freq_voice3_low,0);
             break;
         case 0xD40F:  // Frequenz Stimme 3 (High-Byte)
             sidRegister.freq_voice3_high = value;
-            voice[2].freq = scaleFreq((sidRegister.freq_voice3_high << 8) | sidRegister.freq_voice3_low);
+            voice[2].freq = scaleFreq((sidRegister.freq_voice3_high << 8) | sidRegister.freq_voice3_low,0);
             break;
         case 0xD410:  // Tastverhältnis Stimme 3 (Low-Byte)
             sidRegister.duty_cycle_voice3_low = value;
-            voice[2].dutyCycle =  (float)(((sidRegister.duty_cycle_voice3_high << 8) & 0x0f)  | sidRegister.duty_cycle_voice3_low) / 4096.0;
+            voice[2].dutyCycle =  (float)(((sidRegister.duty_cycle_voice3_high << 8) & 0x0f00)  | sidRegister.duty_cycle_voice3_low) / 4096.0;
             break;
         case 0xD411:  // Tastverhältnis Stimme 3 (High-Byte)
             sidRegister.duty_cycle_voice3_high = value;
-            voice[2].dutyCycle =  (float)(((sidRegister.duty_cycle_voice3_high << 8) & 0x0f)  | sidRegister.duty_cycle_voice3_low) / 4096.0;
+            voice[2].dutyCycle =  (float)(((sidRegister.duty_cycle_voice3_high << 8) & 0x0f00)  | sidRegister.duty_cycle_voice3_low) / 4096.0;
             break;
         case 0xD412:  // Wellenform Stimme 3
             sidRegister.waveform_voice3 = value;
@@ -396,6 +399,7 @@ void fill_buffer_with_tone(short* buffer) {
                     helpBuffer[voiceCNT][i] = (int16_t)(volume * envelop * saw(timeInPeriode[voiceCNT],voice[voiceCNT].freq));
                 break;
             case PWM:             
+                    // helpBuffer[voiceCNT][i] = (int16_t)(volume * envelop * saw(timeInPeriode[voiceCNT],voice[voiceCNT].freq));
                     helpBuffer[voiceCNT][i] = (int16_t)(volume * envelop * pwm(timeInPeriode[voiceCNT],voice[voiceCNT].freq,voice[voiceCNT].dutyCycle));
                 break;
             case NOISE:             

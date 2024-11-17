@@ -232,6 +232,9 @@ void updateTraceStartIRQ(void) {
     if (traceInIRQ >= 5) {
         setException(EXCEPTION_TRACE);
     }
+    if (traceInIRQ >= 3) {
+        printf("Nested IRQ %d  %02x\n",traceInIRQ,doIRQ);
+    }
 
     traceRunner = (traceRunner + 1) % MAXTRACE;
 }
@@ -249,6 +252,9 @@ void updateTraceStopIRQ(void) {
     if (traceInIRQ <= 0) {
         traceInIRQ = 0;
         // setException(EXCEPTION_TRACE);
+    }
+    if (traceInIRQ >= 3) {
+        printf("Nested IRQ %d\n",traceInIRQ);
     }
     traceRunner = (traceRunner + 1) % MAXTRACE;
 }

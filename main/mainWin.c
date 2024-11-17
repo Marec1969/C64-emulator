@@ -82,6 +82,30 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             PostQuitMessage(0);
             return 0;
 
+
+        case WM_PAINT: 
+            PAINTSTRUCT ps;
+            HDC hdc = BeginPaint(hwnd, &ps);
+            if (canvas) {
+                // Skalierung um den Faktor 2
+                int scaledWidth = PAL_B_X * 2;
+                int scaledHeight = PAL_B_Y * 2;
+                
+                StretchDIBits(
+                    hdc,
+                    0, 0,                            // Zielposition
+                    scaledWidth, scaledHeight,       // Zielbreite und -höhe
+                    0, 0,                            // Quellposition in der Bitmap
+                    PAL_B_X, PAL_B_Y,                // Quellbreite und -höhe
+                    &canvas[0][0],                   // Zeiger auf die Bitmap-Daten
+                    bmi,                            // Zeiger auf die BITMAPINFO-Struktur
+                    DIB_RGB_COLORS,                 // Farbformat
+                    SRCCOPY                         // Rasteroperation (direkte Kopie)
+                );
+            }
+            EndPaint(hwnd, &ps);
+            break;            
+#if 0
         case WM_PAINT:
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hwnd, &ps);
@@ -92,6 +116,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             }
             EndPaint(hwnd, &ps);
             break;
+#endif            
         case WM_KEYDOWN:
 
             // Array für die ASCII-Konvertierung
@@ -157,8 +182,8 @@ int runMainWindow(void) {
     initBMI();
 
     // Zielgröße der Client Area
-    int desiredWidth = PAL_B_X;
-    int desiredHeight = PAL_B_Y;
+    int desiredWidth = PAL_B_X*2;
+    int desiredHeight = PAL_B_Y*2;
 
     // Struktur, um die Größe des Fensters zu speichern
     RECT windowRect = {0, 0, desiredWidth, desiredHeight};
@@ -179,7 +204,7 @@ int runMainWindow(void) {
                                CLASS_NAME,                     // Fensterklasse
                                "Simple Graphics Window",       // Fenstertitel
                                WS_OVERLAPPEDWINDOW,            // Fensterstil
-                               1000, 600,                      // Anfangsposition
+                               600, 300,                      // Anfangsposition
                                adjustedWidth, adjustedHeight,  // Berechnete Breite und Höhe
                                NULL,                           // Übergeordnetes Fenster
                                NULL,                           // Menü
