@@ -63,7 +63,7 @@ uint8_t readMemory(uint16_t addr, uint16_t trace) {
                 val = characters[addr - CHAR_ROM_ADDR];
                 seg = MEM_CHAR;
             }
-        } else if ((addr >= BASIC_ROM_ADDR) && (addr <= BASIC_ROM_END)) {
+        } else if ((addr >= BASIC_ROM_ADDR) && (addr < BASIC_ROM_END)) {
             if ((memory[1] & 0x03) == 0x03) {
                 val = rom[addr];
                 seg = MEM_ROM;

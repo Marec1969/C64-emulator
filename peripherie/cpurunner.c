@@ -126,8 +126,8 @@ void exitCPURunner(void) {
     SetWorkingDirectory(startDir);
 
     saveSong();
-    /*
     saveMemory();
+    /*
     saveScreen();
     writeVic_registers_to_file();
     writeCia1toTxtFile();
