@@ -13,6 +13,7 @@
 #include "cpurunner.h"
 #include "mainWin.h"
 #include "vic.h"
+#include "floppy1570.h"
 
 // Function prototypes
 void* mainLoop(void* arg);     // Thread function for the main loop
@@ -65,6 +66,7 @@ int main() {
 
 #if 1
     cpuRunnerInit();
+    init1570();
 
     // Creating the thread for the main loop
     if (pthread_create(&mainThread, NULL, mainLoop, NULL)) {

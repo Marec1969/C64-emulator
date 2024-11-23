@@ -3,14 +3,12 @@
 Embedded C64-Emulator
 Dies ist ein kleiner, unvollständiger C64-Emulator, der darauf abzielt, auch auf mittelgroßen Embedded-Systemen lauffähig zu sein.
 
-Momentan können nur fest eingebundene Programme ausgeführt werden, da keine Ein-/Ausgabe-Unterstützung vorhanden ist.
+Momentan können nur Programme im .t64 Format ausgeführt werden (Aufruf über Funktionstaste F12), da keine Ein-/Ausgabe-Unterstützung vorhanden ist.
 
 Noch ausstehende Arbeiten:
 Erweiterung der Tastaturunterstützung
-Einschränkungen:
-Der Soundchip wird nicht unterstützt
-Keine Bitmap-Grafik
-Keine Ein-/Ausgabemöglichkeiten für Disketten oder Kassetten
+Der Soundchip wird nicht vollständig unterstützt
+Ein-/Ausgabemöglichkeiten für Disketten noch nicht funktionsfähig
 Zukunftsausblick:
 Es wird eine größere Auswahl an Spielen zur Verfügung stehen
 
@@ -18,19 +16,20 @@ Es wird eine größere Auswahl an Spielen zur Verfügung stehen
 
 
 Embedded C64 Emulator
+
+Embedded C64 Emulator
 This is a small, incomplete C64 emulator designed to run on medium-sized embedded systems.
 
-Currently, only precompiled programs can be executed, as there is no I/O support.
+Currently, only programs in the .t64 format can be executed (launched via function key F12), as input/output support is not yet implemented.
 
-Remaining Tasks:
-Additional keyboard support
-Limitations:
-The sound chip is not supported
-No bitmap graphics
-No I/O for disk or cassette
+Outstanding Tasks:
+
+Extension of keyboard support
+The sound chip is not fully supported
+Input/output functionality for disks is not yet operational
 Future Outlook:
-A wider selection of games will be available
 
+A wider selection of games will be made available
 
 
 

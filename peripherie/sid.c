@@ -229,16 +229,19 @@ void sidWrite(uint16_t addr, uint8_t value) {
             break;
 
         case 0xD415:  // Filter Cutoff (Low-Byte)
+            printf("SID wite filter low %02X\n",value);
             sidRegister.filter_cutoff_low = value;
             break;
         case 0xD416:  // Filter Cutoff (High-Byte)
+            printf("SID wite filter high %02X\n",value);
             sidRegister.filter_cutoff_high = value;
             break;
         case 0xD417:  // Filter Resonance
+            printf("SID wite resonance %02X\n",value);
             sidRegister.filter_resonance = value;
             break;
         case 0xD418:  // Lautstärke und Filtermodi
-        // printf("Set volume end filter to %02x\n",value);
+            // printf("Set volume end filter to %02x\n",value);
             sidRegister.volume_and_filter = value;
             break;
 
@@ -545,7 +548,7 @@ void doSid() {
     QueryPerformanceCounter(&end);  // Endzeitpunkt
     double elapsed = (double)(end.QuadPart - start.QuadPart) / frequency.QuadPart;
     if (elapsed>0.015) {
-        printf("Timer delayd %.3f\n",elapsed);
+        // printf("Timer delayd %.3f\n",elapsed);
     }
     QueryPerformanceCounter(&start);  // Endzeitpunkt
 

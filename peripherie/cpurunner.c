@@ -23,6 +23,7 @@ static LARGE_INTEGER start, end;
 #include "saveMemory.h"
 #include "trace.h"
 #include "vic.h"
+#include "floppy1570.h"
 
 extern uint64_t gesTsc;
 
@@ -125,15 +126,18 @@ void exitCPURunner(void) {
     // Arbeitsverzeichnis zurücksetzen
     SetWorkingDirectory(startDir);
 
-    saveSong();
-    saveMemory();
     /*
+    saveSong();
     saveScreen();
     writeVic_registers_to_file();
+    saveMemory();
     writeCia1toTxtFile();
     writeCia2toTxtFile();
     */
     writeTrace();
+    saveMemory();
+    writeCia1toTxtFile();
+    writeCia2toTxtFile();
 }
 
 void cpuRunnerDo(void) {
@@ -186,5 +190,6 @@ void cpuRunnerDo(void) {
         updateCia1(clkDiff);
         updateCia2(clkDiff);
         updateVic(clkCount);
+        device1570Update();
     }
 }

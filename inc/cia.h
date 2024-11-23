@@ -2,6 +2,7 @@
 #define CIA_H
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #include "ciaRtc.h"
 
@@ -132,6 +133,10 @@ typedef struct {
     uint8_t stick1;
     uint8_t stick2;
 } portKeyMap_t;
+
+extern bool serClkC64;
+extern bool serDatC64;
+
 
 extern portKeyMap_t portKeyMap;
 

@@ -1,6 +1,7 @@
 
 
 #include <stdint.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -12,6 +13,16 @@
 #include "cpurunner.h"
 #include "vic.h"
 
+#include "floppy1570.h"
+
+#define CIA2_Data       0x20
+#define CIA2_Clock      0x10
+#define CIA2_Attention  0x08
+
+bool serClkC64 = true;
+bool serDatC64 = true;
+
+
 CIA cia2;
 static uint16_t ciaTimer_ctrl = 0;
 
@@ -21,7 +32,17 @@ void writeCia2(uint16_t adresse, uint8_t value) {
                       // Port A Data Register
                       // Bit 7-0: I/O Pins von Port A
             //printf("write to cia2 PAR %02x \n",value);
-            cia2.pra = value;
+            cia2.pra = value;  
+            if (cia2.ddra & CIA2_Data) {
+                serDatC64 = ((cia2.pra & CIA2_Data) !=0);
+            }
+            if (cia2.ddra & CIA2_Clock) {
+                serClkC64 = ((cia2.pra & CIA2_Clock) !=0);
+            }
+            if (cia2.ddra & CIA2_Attention) {
+                serAtn = ((cia2.pra & CIA2_Attention) !=0);
+            }
+            updateDataline();
             break;
 
         case 0xDD01:  // Adresse: 0xDD01 (CIA 2)
@@ -177,7 +198,21 @@ uint8_t readCia2(uint16_t adresse) {
                       // Port A Data Register
                       // Bit 7-0: I/O Pins von Port A
             // printf("read from cia2 PAR %02x\n",cia2.pra);
+
             value = cia2.pra;
+
+            if (serDat) {
+                value = value & ~0x80;   
+            } else {
+                value = value | 0x80;   
+            }
+
+            if (serClk) {
+                value = value & ~0x40;   
+            } else {
+                value = value | 0x40;   
+            }
+
             break;
 
         case 0xDD01:  // Adresse: 0xDD01 (CIA 2)
@@ -300,6 +335,8 @@ void updateCia2(uint8_t clkCount) {
                 if (cia2.icrMask & 0x01) {
                     doNIM |= CIA2_A_NIM;
                     cia2.icr |= 0x81;
+                } else {
+                    cia2.icr |= 0x01;  // set underrun                     
                 }
                 if (ciaTimer_ctrl & TIMERA2_RELOAD) {
                     cia2.timerA = cia2.reloadTimerA;
@@ -315,6 +352,8 @@ void updateCia2(uint8_t clkCount) {
                 if (cia2.icrMask & 0x02) {
                     doNIM |= CIA2_B_NIM;
                     cia2.icr |= 0x82;
+                } else {
+                    cia2.icr |= 0x02;  // set underrun                     
                 }
                 if (ciaTimer_ctrl & TIMERB2_RELOAD) {
                     cia2.timerB = cia2.reloadTimerB;
