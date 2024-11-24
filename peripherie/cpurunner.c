@@ -133,11 +133,11 @@ void exitCPURunner(void) {
     saveMemory();
     writeCia1toTxtFile();
     writeCia2toTxtFile();
-    */
     writeTrace();
-    saveMemory();
     writeCia1toTxtFile();
     writeCia2toTxtFile();
+    */
+    saveMemory();
 }
 
 void cpuRunnerDo(void) {

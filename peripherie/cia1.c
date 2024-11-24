@@ -345,8 +345,8 @@ void updateCia1(uint8_t clkCount) {
         if (ciaTimer_ctrl & (TIMERB1_RUN)) {
             cia1.timerB -= clkCount;
             if (cia1.timerB <= 0) {
-                extern uint32_t clkCount;
-                printf("[%d us]  Timer B underrun\n",clkCount);
+                // extern uint32_t clkCount;
+                // printf("[%d us]  Timer B underrun\n",clkCount);
                 if (cia1.icrMask & 0x02) {
                     doIRQ |= CIA1_B_IRQ;
                     cia1.icr |= 0x82;

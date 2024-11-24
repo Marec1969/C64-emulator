@@ -44,7 +44,6 @@ typedef enum {
 
 
 void updateDataline(void);
-
 void device1570Update(void);
 void init1570(void);
 
