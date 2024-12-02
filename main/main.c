@@ -91,7 +91,7 @@ int main() {
 
 // Thread function for the main loop
 void* mainLoop(void* arg) {
-    printf("The main loop is running...");
+    printf("The main loop is running...\n");
     cpuRunnerDo();
     return NULL;  // End thread
 }

@@ -55,12 +55,14 @@ static void update_time(void) {
 
 //uint8_t testData[12] =           {11, 8, 10, 0, 153, 32, 34, 65, 34, 0, 0, 0 };
 // uint8_t testData[] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23};
-uint8_t testData[14] = { 1, 8, 11, 8, 10, 0, 153, 32, 34, 65, 34, 0, 0, 0 };
+//uint8_t testData[14] = { 1, 8, 11, 8, 10, 0, 153, 32, 34, 65, 34, 0, 0, 0 };
 #if 0
-0800  00 0c 08 0a 00 41 20 b2 20 32 30 00 17 08 14 00 42 20 b2 20 33 30 00 25 08 1e 00 43 20 b2 20 41 			     A ² 20     B ² 30 %   C ² A
-0820  20 ac 20 42 00 3c 08 28 00 99 20 22 45 52 47 45 42 4e 49 53 53 20 3d 20 22 2c 43 00 00 00 41 00 			 ¬ B < ( ™ "ERGEBNISS = ",C   A 
-0840  85 20 00 00 00 42 00 85 70 00 00 00 43 00 8a 16 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 			…    B …p   C Š                 
+ uint8_t testData[] = {  0x01,0x08,0x0c,0x08,0x0a,0x00,0x41,0x20,0xb2,0x20,0x32,0x30,0x00,0x17,0x08,0x14,0x00,0x42,0x20,0xb2,0x20,0x33,0x30,0x00,0x25,0x08,0x1e,0x00,0x43,0x20,0xb2,0x20,0x41,
+  0x20,0xac,0x20,0x42,0x00,0x3c,0x08,0x28,0x00,0x99,0x20,0x22,0x45,0x52,0x47,0x45,0x42,0x4e,0x49,0x53,0x53,0x20,0x3d,0x20,0x22,0x2c,0x43,0x00,0x00,0x00,0x41,0x00,
+  0x85,0x20,0x00,0x00,0x00,0x42,0x00,0x85,0x70,0x00,0x00,0x00,0x43,0x00,0x8a,0x16,0x00,0x00};
 #endif 
+
+uint8_t testData[] = {1,8,'0',' ','A','B','C',0,'0',' ','X','Y','Z',0,'1',' ','F','F','Z',0,'2',' ','X','C','C',0};
 
 bool    serClko, serClk1570o,serClkC64o;
 bool    serDato,serDat1570o,serDatC64o;
@@ -94,29 +96,42 @@ bool check_timeout(uint64_t start_time, uint64_t timeout_us) {
 }
 
 
+
 void  setCommand(uint8_t receivedCommand) {
 uint8_t receivedAddr = receivedCommand & 0x0f;
     receivedCommand = receivedCommand & 0xf0;
-    if (stdebug)  printf("set Command %02x   %02x\n",receivedCommand,receivedAddr);
+    // if (stdebug) 
+     if (channel[receivedAddr].dataCnt) {
+        for (int i=0;i<channel[receivedAddr].dataCnt;i++) {
+            printf("%c",channel[receivedAddr].data[i]);
+        }
+        printf("\n");
+     }
+     
     switch(receivedCommand ) {
-        case 0x20:
+        case 0x20: // 20 LISTEN + device number (0-30)
+            printf("GPIB -> LISTEN %02x   %02x\n",receivedCommand,receivedAddr);
             if (receivedAddr==addr1570) {
                 deviceState = DEVICE_LISTEN;
             }
         break;
-        case 0x30:
-                deviceState = DEVICE_IDLE;
+        case 0x30: // 3F UNLISTEN
+            printf("GPIB -> UNLISTEN %02x   %02x\n",receivedCommand,receivedAddr);
+            deviceState = DEVICE_IDLE;
         break;
-        case 0x40:
+        case 0x40: // 40 TALK + device number (0-30)
+            printf("GPIB -> TALK %02x   %02x\n",receivedCommand,receivedAddr);
             if (receivedAddr==addr1570) {
                 talkState = TRANSMIT_IDLE;
                 deviceState = DEVICE_TALK;
             }
         break;
-        case 0x50:
-                deviceState = DEVICE_IDLE;
+        case 0x50: // 5F UNTALK
+            printf("GPIB -> UNTALK %02x   %02x\n",receivedCommand,receivedAddr);
+            deviceState = DEVICE_IDLE;
         break;
-        case 0x60:  // OPEN CHANNEL          
+        case 0x60:  // 60 OPEN CHANNEL / DATA + Secondary Address / channel (0-15)
+            printf("set OPEN CHANNEL / DATA  %02x   %02x\n",receivedCommand,receivedAddr);
             if (deviceState == DEVICE_LISTEN) {
                 aktiveChannel = receivedAddr;
                 channel[receivedAddr].dataCnt=0;
@@ -125,7 +140,8 @@ uint8_t receivedAddr = receivedCommand & 0x0f;
             }
             channel[0].dataCnt  = sizeof(testData);
         break;
-        case 0xE0: // CLOSE
+        case 0xE0: // E0 CLOSE + Secondary Address / channel (0-15)
+            printf("set CLOSE %02x   %02x\n",receivedCommand,receivedAddr);
             if (deviceState == DEVICE_LISTEN) {
                 channel[receivedAddr].dataCnt=0;
                 channel[receivedAddr].send = 0;
@@ -133,7 +149,8 @@ uint8_t receivedAddr = receivedCommand & 0x0f;
             }
             aktiveChannel = -1;
         break;
-        case 0xF0: // OPEN 
+        case 0xF0: // F0 OPEN
+            printf("set OPEN %02x   %02x\n",receivedCommand,receivedAddr);
             if (deviceState == DEVICE_LISTEN) {
                 aktiveChannel = receivedAddr;
                 channel[receivedAddr].dataCnt=0;
